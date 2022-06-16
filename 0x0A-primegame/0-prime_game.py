@@ -1,55 +1,34 @@
 #!/usr/bin/python3
-"""
-Contains method to determine the winner of a game
-of prime numbers.
-"""
-
-
-def prime_numbers_between(n):
-    """
-    calculate prime numbers between 1 and n
-
-    Args:
-        n (int): the number to calculate prime numbers up to
-
-    Returns:
-        int: the number of prime numbers between 1 and n
-    """
-    prime_numbers = 0
-
-    for i in range(2, n + 1):
-        is_prime = True
-        for j in range(2, i // 2 + 1):
-            if i % j == 0:
-                is_prime = False
-                break
-        if is_prime:
-            prime_numbers += 1
-    return prime_numbers
+""" Module for Prime Game """
 
 
 def isWinner(x, nums):
-    """
-    Determines the winner of a game of prime numbers.
-
-    Args:
-        x (int): the number of rounds to play
-        nums (list): the list of numbers n to play
-
-    Returns:
-        string: the winner of the game (Ben or Maria)
-    """
-    if not x or not nums:
+    """Solves Prime Game"""
+    if not nums or x < 1:
         return None
-    ben = 0
-    maria = 0
-    for i in range(x):
-        prime_nums = prime_numbers_between(nums[i])
-        if prime_nums % 2 == 0:
-            ben += 1
-        else:
-            maria += 1
-    if ben == maria:
-        return None
-    winner = "Ben" if ben > maria else "Maria"
+    n = max(nums)
+    sieve = [True for _ in range(max(n + 1, 2))]
+    for i in range(2, int(pow(n, 0.5)) + 1):
+        if not sieve[i]:
+            continue
+        for j in range(i*i, n + 1, i):
+            sieve[j] = False
+
+    sieve[0] = sieve[1] = False
+    c = 0
+    for i in range(len(sieve)):
+        if sieve[i]:
+            c += 1
+        sieve[i] = c
+
+    winner = ''
+    player1 = 0
+    for n in nums:
+        player1 += sieve[n] % 2 == 1
+    if player1 * 2 == len(nums):
+        winner = None
+    if player1 * 2 > len(nums):
+        winner = "Maria"
+    else:
+        winner = "Ben"
     return winner
